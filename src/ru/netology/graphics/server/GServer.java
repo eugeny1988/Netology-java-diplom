@@ -21,7 +21,8 @@ public class GServer {
 
     public GServer(TextGraphicsConverter converter) throws Exception {
         if (converter == null) {
-            throw new IllegalArgumentException("Серверу нужно передать в конструктор объект-конвертер, а было передано null.");
+            System.err.println("Серверу нужно передать в конструктор объект-конвертер, а было передано null.");
+            return;
         }
         this.converter = converter;
         this.converter.setMaxHeight(300);
