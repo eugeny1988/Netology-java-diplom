@@ -8,6 +8,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         TextGraphicsConverter converter = new ImageConverter();
+        converter.setMaxRatio(4);
         GServer server = new GServer(converter);
         server.start();
 

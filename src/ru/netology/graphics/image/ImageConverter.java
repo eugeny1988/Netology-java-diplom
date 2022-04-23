@@ -1,5 +1,6 @@
 package ru.netology.graphics.image;
 
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,31 +10,36 @@ import java.io.IOException;
 import java.net.URL;
 
 public class ImageConverter implements TextGraphicsConverter {
-    private double maxRatio = 4;
-    private final int maxValue = 100;
+
+    private int maxHeight;
+    private int maxWidth;
+    private double maxRatio;
+    private TextColorSchema schema;
 
 
     @Override
     public String convert(String url) throws IOException, BadImageSizeException {
         TextColorSchema schema = new ColorSchema('#', '$', '@', '%', '*', '+', '-', '\'');
+        setTextColorSchema(schema);
         BufferedImage img = ImageIO.read(new URL(url));
         int newWidth = img.getWidth();
         int newHeight = img.getHeight();
+
         double ratio = newHeight > newWidth ? (double) (newHeight / newWidth) : (double) (newWidth / newHeight);
-        this.setMaxRatio(maxRatio);
+
         if (ratio > maxRatio) {
             throw new BadImageSizeException(ratio, maxRatio);
         }
 
-        if (newWidth > maxValue || newHeight > maxValue) {
-            if (newWidth > maxValue) {
-                newHeight = newHeight / (newWidth / maxValue);
-                newWidth = maxValue;
-            } else if (newHeight > maxValue) {
-                newWidth = newWidth / (newHeight / maxValue);
-                newHeight = maxValue;
-            }
+        if (newWidth > maxWidth) {
+            newHeight = (newHeight / newWidth) * maxHeight;
+            newWidth = maxWidth;
         }
+        if (newHeight > maxHeight) {
+            newWidth = (newWidth / newHeight) * maxWidth;
+            newHeight = maxHeight;
+        }
+
 
         Image scaledImage = img.getScaledInstance(newWidth, newHeight, BufferedImage.SCALE_SMOOTH);
         BufferedImage bwImg = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_BYTE_GRAY);
@@ -57,12 +63,12 @@ public class ImageConverter implements TextGraphicsConverter {
 
     @Override
     public void setMaxWidth(int width) {
-
+        this.maxWidth = width;
     }
 
     @Override
     public void setMaxHeight(int height) {
-
+        this.maxHeight = height;
     }
 
     @Override
@@ -72,6 +78,6 @@ public class ImageConverter implements TextGraphicsConverter {
 
     @Override
     public void setTextColorSchema(TextColorSchema schema) {
-
+        this.schema = schema;
     }
 }
